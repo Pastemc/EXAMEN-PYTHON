@@ -12,8 +12,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Paso 1: Leer las imágenes
-img1 = cv2.imread('reategui.jpg', cv2.IMREAD_GRAYSCALE)
-img2 = cv2.imread('reategui.jpg', cv2.IMREAD_GRAYSCALE)
+img1 = cv2.imread('cara.jpg', cv2.IMREAD_GRAYSCALE)
+img2 = cv2.imread('cara.jpg', cv2.IMREAD_GRAYSCALE)
 
 # Paso 2: Inicializar el detector y el descriptor (por ejemplo, SIFT)
 sift = cv2.SIFT_create()
