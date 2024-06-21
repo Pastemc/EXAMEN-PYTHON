@@ -20,16 +20,13 @@ def kmeans_segmentation(image_path, k=3):
 
     # Obtener las dimensiones de la imagen
     w, h, d = image_lab.shape
-
-    # Reshape the image to a 2D array of pixels
     image_array = image_lab.reshape((w * h, d))
 
     # Paso 2: Aplicar el algoritmo de k-means para segmentar la imagen en k regiones
     kmeans = KMeans(n_clusters=k, random_state=0).fit(image_array)
     segmented_labels = kmeans.labels_
     centers = kmeans.cluster_centers_
-
-    # Crear la imagen segmentada
+    # Creamos la imagen segmentada
     segmented_image_lab = centers[segmented_labels].reshape(image_lab.shape)
 
     # Convertir la imagen segmentada de L*a*b a RGB
