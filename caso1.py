@@ -12,7 +12,7 @@ from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 
 # Paso 1: Leer la imagen y convertirla a espacio de color L*a*b
-image = cv2.imread('imagen.jpg')#ruta de la imagen
+image = cv2.imread('fisi.jpg')#ruta de la imagen
 image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 image_lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
 
