@@ -8,57 +8,47 @@
 #la imagen
 import cv2
 import numpy as np
-import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
-from skimage.color import rgb2lab, lab2rgb
+import matplotlib.pyplot as plt
 
-def kmeans_segmentation(image_path, k=3):
-    # Paso 1: Leer la imagen y convertirla al espacio de color L*a*b
-    image = cv2.imread(image_path)
-    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    image_lab = rgb2lab(image_rgb)
+# Paso 1: Leer la imagen y convertirla a espacio de color L*a*b
+image = cv2.imread('imagen.jpg')#ruta de la imagen
+image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+image_lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
 
-    # Obtener las dimensiones de la imagen
-    w, h, d = image_lab.shape
-    image_array = image_lab.reshape((w * h, d))
+# Aplanar la imagen
+pixels = image_lab.reshape((-1, 3))
 
-    # Paso 2: Aplicar el algoritmo de k-means para segmentar la imagen en k regiones
-    kmeans = KMeans(n_clusters=k, random_state=0).fit(image_array)
-    segmented_labels = kmeans.labels_
-    centers = kmeans.cluster_centers_
-    # Creamos la imagen segmentada
-    segmented_image_lab = centers[segmented_labels].reshape(image_lab.shape)
+# Paso 2: Aplicar el algoritmo de k-means para segmentar la imagen en k regiones
+k = 3  # Número de clusters
+kmeans = KMeans(n_clusters=k, random_state=42)
+kmeans.fit(pixels)
+labels = kmeans.labels_
 
-    # Convertir la imagen segmentada de L*a*b a RGB
-    segmented_image_rgb = lab2rgb(segmented_image_lab)
+# Crear una nueva imagen para la segmentación
+segmented_image = np.zeros_like(pixels)
 
-    return image_rgb, segmented_image_rgb
+# Asignar a cada pixel el color del cluster correspondiente
+for i in range(k):
+    segmented_image[labels == i] = np.mean(pixels[labels == i], axis=0)
 
-def main():
-    # Ruta de la imagen
-    image_path = 'imagen.jpg'  # Reemplaza con la ruta a tu imagen
+segmented_image = segmented_image.reshape(image_lab.shape)
+segmented_image = segmented_image.astype(np.uint8)
 
-    # Número de clusters
-    k = 3
+# Convertir de L*a*b a RGB
+segmented_image_rgb = cv2.cvtColor(segmented_image, cv2.COLOR_LAB2RGB)
 
-    # Paso 3: Segmentar la imagen y visualizar los resultados
-    original_image, segmented_image = kmeans_segmentation(image_path, k)
+# Paso 3: Visualizar la imagen segmentada y comparar los resultados con la imagen original
+plt.figure(figsize=(12, 6))
+plt.subplot(1, 2, 1)
+plt.imshow(image_rgb)
+plt.title('Imagen Original')
+plt.axis('off')
 
-    # Mostrar la imagen original y la imagen segmentada
-    plt.figure(figsize=(12, 6))
-    plt.subplot(1, 2, 1)
-    plt.imshow(original_image)
-    plt.title('Imagen Original')
-    plt.axis('off')
+plt.subplot(1, 2, 2)
+plt.imshow(segmented_image_rgb)
+plt.title('Imagen Segmentada')
+plt.axis('off')
 
-    plt.subplot(1, 2, 2)
-    plt.imshow(segmented_image)
-    plt.title(f'Segmentacion en k clusters')
-    plt.axis('off')
-
-    plt.show()
-
-if _name_ == "_main_":
-    main()        
-
+plt.show()
 
